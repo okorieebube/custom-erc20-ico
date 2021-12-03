@@ -1,0 +1,10 @@
+{
+  "name": "custom-erc20-ico",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "kelvin <okorieebube1@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "hardhat": "^2.7.0"
+  }
+}
