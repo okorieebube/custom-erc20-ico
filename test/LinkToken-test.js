@@ -39,4 +39,38 @@ describe("LinkToken", function () {
     expect(await linkToken.balanceOf(investor1.address)).to.equal(100);
     expect(await linkToken.balanceOf(admin.address)).to.equal(999900);
   });
+
+  it("should approve third-party transfer of token", async function () {
+    // Call function and get just the return value
+    let transfer = await linkToken.callStatic.approve(investor1.address, 100);
+    expect(transfer).to.equal(true);
+
+    // Call function and get your txn reciept before its even mined
+    let txn = await linkToken.approve(investor1.address, 100);
+
+    // Get reciept after waiting for your txn to be mined
+    let reciept = await txn.wait();
+
+    // Triggers one event
+    expect(reciept.events.length).to.equal(1);
+    // Event triggered should be the Approval event
+    expect(reciept.events[0].event).to.equal("Approval");
+    // Event logs the correct required arguments
+    expect(reciept.events[0].args._owner).to.equal(admin.address);
+    expect(reciept.events[0].args._spender).to.equal(investor1.address);
+    expect(reciept.events[0].args._value).to.equal(100);
+
+    // Deducts & adds funds from intended accounts
+    expect(
+      await linkToken.allowance(admin.address, investor1.address)
+    ).to.equal(100);
+  });
+
+  it("should perform third-party transfer of token", async function(){
+      _from = investor1;
+      _to = investor2;
+      _spending = investor3;
+  })
+
+
 });
