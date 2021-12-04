@@ -48,14 +48,15 @@ contract LinkToken {
         return true;
     }
 
-    function tranferFrom(
+    function transferFrom(
         address _from,
         address _to,
         uint256 _value
     ) public returns (bool success) {
-        require(balanceOf[_from] >= _value, "Insufficient funds");
+        require(balanceOf[_from] >= _value, "Insufficient balance");
         require(allowance[_from][msg.sender] >= _value, "Insufficient allowed funds");
         balanceOf[_from] -= _value;
+        console.log(balanceOf[_from]);
         balanceOf[_to] += _value;
         allowance[_from][msg.sender] -= _value;
 

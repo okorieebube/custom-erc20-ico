@@ -66,11 +66,35 @@ describe("LinkToken", function () {
     ).to.equal(100);
   });
 
-  it("should perform third-party transfer of token", async function(){
-      _from = investor1;
-      _to = investor2;
-      _spending = investor3;
-  })
+  it("should perform third-party transfer of token", async function () {
+    _from = investor1.address;
+    _to = investor2.address;
+    _spender = investor3.address;
 
+    await linkToken.connect(investor1).approve(_spender, 10);
 
+    // Try transferring more than `_from` balance
+    await expect(
+      linkToken.connect(investor3).transferFrom(_from, _to, 9999)
+    ).to.be.revertedWith("Insufficient balance");
+    await expect(
+      linkToken.connect(investor3).transferFrom(_from, _to, 20)
+    ).to.be.revertedWith("Insufficient allowed funds");
+    // Returns true when successfull
+    let transfer = await linkToken
+      .connect(investor3)
+      .callStatic.transferFrom(_from, _to, 10);
+    await expect(transfer).to.equal(true);
+
+    let txn = await linkToken.connect(investor3).transferFrom(_from, _to, 10);
+
+    let reciept = await txn.wait();
+    expect(reciept.events.length).to.equal(1);
+    // Event triggered should be the transfer event
+    expect(reciept.events[0].event).to.equal("Transfer");
+
+    expect(await linkToken.balanceOf(_from)).to.equal(90);
+    expect(await linkToken.balanceOf(_to)).to.equal(10);
+    expect(await linkToken.allowance(_from, _spender)).to.equal(0);
+  });
 });
