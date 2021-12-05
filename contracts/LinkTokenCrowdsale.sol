@@ -35,12 +35,19 @@ contract LinkTokenCrowdsale {
         );
         require(
             token.balanceOf(address(this)) >= _numberOfTokens,
-            "Error: You can't buy upto that amount!"
+            "Error: You can't buy more tokens than available!"
         );
         require(token.transfer(msg.sender, _numberOfTokens));
 
         tokensSold += _numberOfTokens;
 
         emit Sell(msg.sender, _numberOfTokens);
+    }
+
+    function endSale() public {
+        require(msg.sender == admin, "Error! only admin can end crowdsale");
+        require(token.transfer(admin, token.balanceOf(address(this))));
+
+        payable(admin).transfer(address(this).balance);
     }
 }
