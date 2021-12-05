@@ -14,10 +14,33 @@ contract LinkTokenCrowdsale {
     address admin;
     LinkToken public token;
     uint256 public tokenPrice;
+    uint256 public tokensSold;
 
     constructor(LinkToken _token, uint256 _tokenPrice) {
         admin = msg.sender;
         token = _token;
         tokenPrice = _tokenPrice;
+    }
+
+    event Sell(address _buyer, uint256 _numberOfTokens);
+
+    function multiply(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        require(y == 0 || (z = x * y) / y == x);
+    }
+
+    function buyTokens(uint256 _numberOfTokens) public payable {
+        require(
+            msg.value == multiply(_numberOfTokens, tokenPrice),
+            "Error: msg.value must equal number of tokens in wei"
+        );
+        require(
+            token.balanceOf(address(this)) >= _numberOfTokens,
+            "Error: You can't buy upto that amount!"
+        );
+        require(token.transfer(msg.sender, _numberOfTokens));
+
+        tokensSold += _numberOfTokens;
+
+        emit Sell(msg.sender, _numberOfTokens);
     }
 }
