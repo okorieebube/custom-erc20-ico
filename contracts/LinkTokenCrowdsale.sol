@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.0;
+pragma solidity 0.8.0;
 import "./LinkToken.sol";
 
 /* 
@@ -48,6 +48,9 @@ contract LinkTokenCrowdsale {
         require(msg.sender == admin, "Error! only admin can end crowdsale");
         require(token.transfer(admin, token.balanceOf(address(this))));
 
-        payable(admin).transfer(address(this).balance);
+        // payable(admin).transfer(address(this).balance);
+
+        (bool sent, ) = payable(admin).call{value: address(this).balance}("");
+        require(sent, "Failed to send ether");
     }
 }

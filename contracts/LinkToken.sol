@@ -1,12 +1,13 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.0;
+pragma solidity 0.8.0;
 
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
 contract LinkToken {
     string public name = "Link Token";
     string public symbol = "LINK";
     string public version = "v1.0";
+    uint256 public decimals = 18;
 
     uint256 public totalSupply;
 
@@ -14,6 +15,7 @@ contract LinkToken {
     mapping(address => mapping(address => uint256)) public allowance;
 
     constructor(uint256 _initalSupply) {
+        // _initalSupply = _initalSupply * (10**decimals);
         balanceOf[msg.sender] = _initalSupply;
         totalSupply = _initalSupply;
     }
@@ -54,7 +56,10 @@ contract LinkToken {
         uint256 _value
     ) public returns (bool success) {
         require(balanceOf[_from] >= _value, "Insufficient balance");
-        require(allowance[_from][msg.sender] >= _value, "Insufficient allowed funds");
+        require(
+            allowance[_from][msg.sender] >= _value,
+            "Insufficient allowed funds"
+        );
         balanceOf[_from] -= _value;
         balanceOf[_to] += _value;
         allowance[_from][msg.sender] -= _value;

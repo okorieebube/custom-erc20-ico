@@ -17,6 +17,8 @@ describe("LinkTokenCrowdsale", function () {
     );
     await linkCrowdSale.deployed();
     await linkToken.transfer(linkCrowdSale.address, 750000); // Transfer 75% of total supply to crowdsale
+
+    console.log(await linkToken.balanceOf(admin.address))
   });
   it("should setup crowdsale contract with correct values", async function () {
     expect(await linkCrowdSale.token()).to.not.equal(0x0);

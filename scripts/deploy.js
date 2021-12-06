@@ -1,7 +1,8 @@
 const hre = require("hardhat");
-
+// 0x19aA442e3FaCD30D52c54c8FDE6c683A3c920C05
+// 0x140748C52AA24ADFF7D18e630365c1481dFEF76d
 async function main() {
-  const [admin, investor1, investor2, investor3] = await ethers.getSigners();
+  const [admin] = await ethers.getSigners();
   const LinkToken = await ethers.getContractFactory("LinkToken");
   const linkToken = await LinkToken.deploy("1000000000000000000000000");
   await linkToken.deployed();
@@ -24,7 +25,11 @@ async function main() {
     await linkToken.balanceOf(linkCrowdSale.address),
     " to crowdsale"
   );
-  console.log("Admins Link Balance:", await linkToken.balanceOf(admin.address));
+  console.log("Deployers address:", admin.address);
+  console.log(
+    "Deployers Link Balance:",
+    await linkToken.balanceOf(admin.address)
+  );
 }
 
 main()
